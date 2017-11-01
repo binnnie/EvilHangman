@@ -1,5 +1,14 @@
 import java.util.*;
 
+/*
+   Brandon Dixon
+   CS145
+   11/2/2017
+   HangmanManager.java
+   
+   Manages all of the data and word choosing behind the Evil Hangman game.
+*/
+
 public class HangmanManager{
    private Set<String> words;
    private int guessesLeft;
@@ -27,18 +36,26 @@ public class HangmanManager{
       }
    }
    
+   //Returns the words still being considered.
    public Set<String> words(){
       return this.words;
    }
    
+   
+   //Returns the guesses left in the game.
    public int guessesLeft(){
       return this.guessesLeft;
    }
    
+   
+   //Returns the set of characters guessed.
    public SortedSet<Character> guesses(){
       return this.guessed;
    }
    
+   
+   //Returns the current pattern being displayed to the user unless it is empty in which case it 
+   //throws an exception.
    public String pattern(){
       if(this.pattern != null){
          return this.pattern;
@@ -47,6 +64,8 @@ public class HangmanManager{
       }
    }
    
+   //Determines the new pattern based on the guessed character. Returns the number of time the 
+   //guessed character occurs in the pattern.
    public int record(char guess){
       if(this.guessesLeft < 1 || this.words.isEmpty()){
          throw new IllegalStateException("game is over.");
@@ -64,11 +83,14 @@ public class HangmanManager{
             }
          }
          this.guessed.add(guess);
-         this.guessesLeft--;
+         if(count == 0){
+            this.guessesLeft--;
+         }
          return count;
       }
    }
    
+   //Returns a new map of possible patterns to the each remaining word; based on the guessed character.
    private Map<String, Set<String>> buildPatternMap(char guess){
       Map<String, Set<String>> patternMap = new TreeMap<String, Set<String>>();
       for(String currentWord : this.words){
@@ -93,6 +115,8 @@ public class HangmanManager{
       return patternMap;
    }
    
+   
+   //Returns the which pattern has the most possible words mapped to it.
    private String choosePattern(Map<String, Set<String>> patternMap){
       String chosen = null;
       Set<String> patternSet = patternMap.keySet();
@@ -104,6 +128,8 @@ public class HangmanManager{
       return chosen;
    }
    
+   //Returns a combination of the new chosen pattern and the already shown pattern since the new 
+   //chosen one didn't have the already revealed characters visible.
    private String combinePattern(String chosenPattern){
       String combinedPattern = "";
       for(int i = 0 ; i < this.pattern.length() ; i++){
